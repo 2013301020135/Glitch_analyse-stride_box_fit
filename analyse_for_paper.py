@@ -16,27 +16,15 @@ from mpl_toolkits.axes_grid.inset_locator import inset_axes
 
 parser = argparse.ArgumentParser(description='Plot routine for fitting over a glitch.')
 parser.add_argument('-p', '--parfile', help='Path to ephemeris', required=True)
+parser.add_argument('-s', '--stride', help='Stride data text file', required=True)
 args = parser.parse_args()
 par = args.parfile
-
+strdat = args.stride
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
 #plt.rcParams["figure.figsize"] = [7.5,10.6]
-
-dat="deltanu.asc"
-#par="test_final.par"
-
-t, nu = np.loadtxt(dat,unpack=True)
-t, no_nudot, nudot, nudot_model = np.loadtxt("nudot.asc", unpack=True)
-#this_mjd, this_dnu, this_dnu_err = np.loadtxt("mjd_dnu_dnuerr_nof2.txt", unpack=True)
-panel1_mjd, panel1_nu, panel1_err = np.loadtxt("panel1.txt", unpack=True)
-panel2_mjd, panel2_nu, panel2_err = np.loadtxt("panel2.txt", unpack=True)
-panel3_mjd, panel3_nu, panel3_err = np.loadtxt("panel3.txt", unpack=True)
-str_mjd, str_nudot, str_err = np.loadtxt("stride_data.txt", unpack=True, usecols=[0,3,4])
-#print(np.max(str_err)) ; sys.exit(9)
-
 
 pglep=np.zeros(100)
 pglf0=np.zeros(100)
@@ -115,6 +103,18 @@ print("Initial jump:", pglf0d[0]+pglf0d2[0]+pglf0[0])
 
 #print("Initial jump:", np.sum(pglf0d)+pglf0[0])
 
+dat="deltanu_{}.asc".format(psrn)
+#par="test_final.par"
+
+t, nu = np.loadtxt(dat,unpack=True)
+t, no_nudot, nudot, nudot_model = np.loadtxt("nudot_{}.asc".format(psrn), unpack=True)
+#this_mjd, this_dnu, this_dnu_err = np.loadtxt("mjd_dnu_dnuerr_nof2.txt", unpack=True)
+panel1_mjd, panel1_nu, panel1_err = np.loadtxt("panel1_{}.txt".format(psrn), unpack=True)
+panel2_mjd, panel2_nu, panel2_err = np.loadtxt("panel2_{}.txt".format(psrn), unpack=True)
+panel3_mjd, panel3_nu, panel3_err = np.loadtxt("panel3_{}.txt".format(psrn), unpack=True)
+str_mjd, str_nudot, str_err , str_nu2dot, str_2err = np.loadtxt(strdat, unpack=True, usecols=[0,3,4,5,6])
+#print(np.max(str_err)) ; sys.exit(9)
+
 glep = pglep[0]  # mod 
 preepochs = []
 for i in range(0, len(t)):
@@ -172,6 +172,8 @@ mdglf1 = np.zeros_like(xx)
 mdglf1[xx>0] = pglf1[0]
 
 strx = (str_mjd-glep)*86400
+#str2nu = np.zeros_like(strx)
+#str2nu[strx>0] = strx[strx>0] * str_nu2dot
 
 strglf1 = np.zeros_like(strx)
 strglf1[strx>0] = pglf1[0]
@@ -300,10 +302,10 @@ plt.ylabel(r'$\dot{\nu}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
 plt.xlabel("Days since glitch epoch", fontsize=15)
 plt.subplots_adjust(wspace=0, hspace=0.002)
 
-frame = plt.gca()
-frame.axes.xaxis.set_ticklabels([])
+#frame = plt.gca()
+#frame.axes.xaxis.set_ticklabels([])
 
 
 plt.tight_layout()
-plt.savefig("nu_nudot_gp.pdf", format='pdf', dpi=400)
+plt.savefig("nu_nudot_gp_{}.pdf".format(psrn), format='pdf', dpi=400)
 plt.show()

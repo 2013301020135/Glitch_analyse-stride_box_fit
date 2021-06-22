@@ -8,8 +8,10 @@ from scipy.optimize import curve_fit # mod ly
 
 parser = argparse.ArgumentParser(description='Generating data files fot plot routine of fitting over a glitch.')
 parser.add_argument('-p', '--parfile', help='Path to ephemeris', required=True)
+parser.add_argument('-s', '--stride', help='Stride data text file', required=True)
 args = parser.parse_args()
 par = args.parfile
+strdat = args.stride
 
 #from matplotlib.ticker import FormatStrFormatter
 #plt.rcParams['pdf.fonttype'] = 42
@@ -17,7 +19,7 @@ par = args.parfile
 
 #par="test_final.par"
 
-t, f0, f0e, f1, f1e, mjds, mjdf = np.loadtxt("stride_data.txt", unpack=True)
+t, f0, f0e, f1, f1e, f2, f2e, mjds, mjdf = np.loadtxt(strdat, unpack=True)
 
 pglep=np.zeros(100)
 pglf0=np.zeros(100)
@@ -89,7 +91,6 @@ def glexp(xx,td,f0d):
     return ee
 
 
-
 glep = pglep[0] # add
 
 #Time since period epoch
@@ -149,18 +150,18 @@ plt.show()
     #print(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - exp1[i]), 1e6*f0e[i])
 # output to panel.txt
 
-with open("panel1.txt","w") as file1:
+with open("panel1_{}.txt".format(psrn),"w") as file1:
     for i in range(0, len(t)):
         file1.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i]), 1e6*f0e[i]))
     file1.close()
 
-with open("panel2.txt","w") as file2:
+with open("panel2_{}.txt".format(psrn),"w") as file2:
     for i in range(0, len(t)):
         file2.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i]), 1e6*f0e[i]))
     file2.close()
 
-with open("panel3.txt","w") as file3:
+with open("panel3_{}.txt".format(psrn),"w") as file3:
     for i in range(0, len(t)):
-        file3.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - exp1[i]), 1e6*f0e[i]))
+        file3.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - exp1[i] -exp2[i]), 1e6*f0e[i]))
     file3.close()
 

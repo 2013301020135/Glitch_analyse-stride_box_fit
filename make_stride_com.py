@@ -20,6 +20,9 @@ timfile = args.timfile
 width = float(args.width)
 stride = float(args.stride)
 glep = sorted(args.glep)
+puls = str(timfile).split('.')[0]
+pname = puls.split('_')[-1]
+print(pname)
 
 def get_lims(tim):
     '''
@@ -64,15 +67,16 @@ def main():
     leading = first
     trailing = first + width 
     counter = 0
-    while trailing <= last:
-        #print("Fitting between {} and {}".format(leading, trailing))
-        leading, trailing = create_global(leading, trailing)
-        epoch = leading + ((trailing - leading)/2.0)
-        print(leading, trailing, epoch)
+    with open(str(pname)+'_g'+str(len(glep))+'_w'+str(int(width))+'_s'+str(int(stride))+'_epoch.txt', 'w') as f:
+        while trailing <= last:
+            #print("Fitting between {} and {}".format(leading, trailing))
+            leading, trailing = create_global(leading, trailing)
+            epoch = leading + ((trailing - leading)/2.0)
+            print(leading, trailing, epoch, file=f)
         
-        counter+=1
-        leading= first + counter*stride
-        trailing= first + width + counter*stride
+            counter+=1
+            leading= first + counter*stride
+            trailing= first + width + counter*stride
 
     
 

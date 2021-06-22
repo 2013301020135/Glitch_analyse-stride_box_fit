@@ -9,26 +9,42 @@ import matplotlib.pyplot as plt
 
 from scipy import linalg
 import sys
+import os # mod ly
 import subprocess
 
 par=sys.argv[1]
 tim=sys.argv[2]
 par2=sys.argv[3]
+puls = str(tim).split('.')[0]
+pname = puls.split('_')[-1]
+print(pname)
 
 subprocess.call(["tempo2","-output","exportres","-f",par2,tim,"-nofit"])
-
-rx2,ry2,re2 = np.loadtxt("out.res",usecols=(0,5,6),unpack=True)
+os.rename("out.res", "out2_{}.res".format(pname))
+rx2,ry2,re2 = np.loadtxt("out2_{}.res".format(pname),usecols=(0,5,6),unpack=True)
 
 subprocess.call(["tempo2","-output","exportres","-f",par,tim,"-writeres"])
 #subprocess.run(["ls","-l"])
+os.rename("param.labels", "param_{}.labels".format(pname))
+os.rename("param.vals", "param_{}.vals".format(pname))
+os.rename("cov.matrix", "cov_{}.matrix".format(pname))
+os.rename("tnred.meta", "tnred_{}.meta".format(pname))
 
-lab = np.loadtxt("param.labels",dtype=np.str).T
-beta = np.loadtxt("param.vals")
-cvm  = np.loadtxt("cov.matrix")
-meta = np.loadtxt("tnred.meta",usecols=(1))
+os.rename("out.res", "out_{}.res".format(pname))
+os.rename("prefit.res", "prefit_{}.res".format(pname))
+os.rename("postfit.res", "postfit_{}.res".format(pname))
+os.rename("awhite.res", "awhite_{}.res".format(pname))
+os.rename("design.matrix", "design_{}.matrix".format(pname))
+os.rename("constraints.matrix", "constraints_{}.matrix".format(pname))
+os.rename("adesign.matrix", "adesign_{}.matrix".format(pname))
+
+lab = np.loadtxt("param_{}.labels".format(pname),dtype=np.str).T
+beta = np.loadtxt("param_{}.vals".format(pname))
+cvm  = np.loadtxt("cov_{}.matrix".format(pname))
+meta = np.loadtxt("tnred_{}.meta".format(pname),usecols=(1))
 F0=0
-start =46500
-finish=58200
+start =40000  # to be mod
+finish=60000  # to be mod
 psrn="??"
 
 glep=np.zeros(100)
@@ -85,7 +101,7 @@ glep=glep[:max_glitch]
 omega=meta[0]
 epoch=meta[1]
 
-rx,ry,re = np.loadtxt("out.res",usecols=(0,5,6),unpack=True)
+rx,ry,re = np.loadtxt("out_{}.res".format(pname),usecols=(0,5,6),unpack=True)
 
 dat_t=rx
 dat_e=re
@@ -143,7 +159,7 @@ M2 = np.zeros((2*nwav,len(dat_t)))
 dM = np.zeros_like(M)
 ddM = np.zeros_like(M)
 
-with open("white.par","w") as f:
+with open("white_{}.par".format(pname),"w") as f:
     f.writelines(inpar)
     f.write("WAVE_OM {}\n".format(omega))
     f.write("WAVEEPOCH {}\n".format(epoch))
@@ -335,7 +351,7 @@ for ge in glep:
 ry += np.mean(y_dat-ry)
 
 
-with open("white_ifunc.par","w") as f:
+with open("white_ifunc_{}.par".format(pname),"w") as f:
     f.writelines(inpar)
     f.write("SIFUNC 2 0\n")
     for i in range(len(t)):
@@ -343,11 +359,11 @@ with open("white_ifunc.par","w") as f:
 
 
 
-with open("nudot.asc","w") as f:
+with open("nudot_{}.asc".format(pname),"w") as f:
     for i in range(len(yd)):
         f.write("{} {} {} {}\n".format(t[i],yd[i],yd_model[i],yd2[i]))
 
-with open("deltanu.asc","w") as f:
+with open("deltanu_{}.asc".format(pname),"w") as f:
     for i in range(len(yf2)):
         f.write("{} {}\n".format(t[i],yf2[i]))
 
