@@ -58,18 +58,24 @@ def run_fit(par, tim, epoch):
             if fields[0] == "F0":
                 F0 = fields[3]
                 F0_e = fields[4]
-                if float(F0_e)==0 or F0_e=='nan' or F0_e=='-nan': 
+                if not 0<abs(float(F0_e))<1e-7: 
                     return None
+                #if float(F0_e)==0 or F0_e=='nan' or F0_e=='-nan': 
+                    #return None
             if fields[0] == "F1":
                 F1 = fields[3]
                 F1_e = fields[4]
-                if float(F1_e)==0 or F1_e=='nan' or F1_e=='-nan': 
+                if not 0<abs(float(F1_e))<1e-13: 
                     return None
+                #if float(F1_e)==0 or F1_e=='nan' or F1_e=='-nan': 
+                    #return None
             if fields[0] == "F2":
                 F2 = fields[3]
                 F2_e = fields[4]
-                if float(F2_e)==0 or F2_e=='nan' or F2_e=='-nan': 
+                if not 0<abs(float(F2_e))<1e-17: 
                     return None
+                #if float(F2_e)==0 or F2_e=='nan' or F2_e=='-nan': 
+                    #return None
     try:    
         return pepoch, F0, F0_e, F1, F1_e, F2, F2_e
     except UnboundLocalError:

@@ -1,3 +1,13 @@
 *.eph
 *.pdf
-
+*.txt
+*.matrix
+*.res
+*.tim
+*.par
+*.post
+*.results
+*.asc
+*.labels
+*.vals
+*.meta
