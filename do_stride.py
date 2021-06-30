@@ -65,7 +65,7 @@ def run_fit(par, tim, epoch):
             if fields[0] == "F1":
                 F1 = fields[3]
                 F1_e = fields[4]
-                if not 0<abs(float(F1_e))<1e-13: 
+                if not 0<abs(float(F1_e))<1e-14: 
                     return None
                 #if float(F1_e)==0 or F1_e=='nan' or F1_e=='-nan': 
                     #return None
@@ -92,7 +92,8 @@ def main():
             epoch = fitepochs[i]
         
             out = run_fit(parfile, timfile, epoch)
-            os.rename("global.par", str(starts[i]) + "_" + str(ends[i]) + ".eph")
+            os.remove("global.par")
+            #os.rename("global.par", str(starts[i]) + "_" + str(ends[i]) + ".eph")
             if out:
                 print(out[0], out[1], out[2], out[3], out[4], out[5], out[6], starts[i], ends[i], file=f)
        
