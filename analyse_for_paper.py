@@ -203,140 +203,222 @@ for i in range(len(t)):
             mask_len.append(i) # or i+1?
 # mask length is the length of pre-glitch data
 
-
 #frequency evolution with second derivative and spin-down change subtracted
 numod = nu - tf2 # why only f2? deltanu=nu-F0-f1?
 mc = ma.array(numod)
-mc[mask_len] = ma.masked  # mc: nu subtract f2 with pre-glitch data masked
-
-
-fig, ax = plt.subplots(nrows=5, ncols=1, figsize=(7.5, 12.8)) #10.6
-#fig = plt.figure(figsize=(7.5, 10.6))
-#gs = gridspec.GridSpec(4, 1)
-#gs.update(wspace=0.025, hspace=0.0001)
-
-plt.subplot(511)
-plt.plot(t-glep,1e6*mc, 'k-', zorder=2)
-plt.errorbar(panel1_mjd - glep, panel1_nu, yerr=panel1_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1)
-#plt.errorbar(this_mjd - glep, this_dnu, yerr=this_dnu_err, marker='.', color='k', ecolor='k', linestyle='None', alpha=0.2, markersize=4)
-plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15)
-for gls in gleps:
-    plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-#plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
-#plt.xlim([-30, 50])
-#plt.xlim([-10, 10])
-
-frame = plt.gca()
-frame.axes.xaxis.set_ticklabels([])
-
-plt.subplot(512)
-plt.plot(t-glep,1e6*(mc-glf0-glf1), 'k-', zorder=2)
-plt.errorbar(panel2_mjd - glep, panel2_nu, yerr=panel2_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.xlim([-30, 30])
-#plt.xlim([-30, 50])
-#plt.xlim([-10, 10])
-#plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
-for gls in gleps:
-    plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15, labelpad=15)
-
-frame = plt.gca()
-frame.axes.xaxis.set_ticklabels([])
-
-#If exists recovery
-plt.subplot(513)
-plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15)
-#plt.ylim([-0.3, 0.08])
-#plt.xlim([-30, 50])
-#plt.xlim([-10, 10])
-plt.plot(t-glep,1e6*(mc-glf0-glf1-exp1-exp2), 'k-', zorder=2)
-plt.errorbar(panel3_mjd - glep, panel3_nu, yerr=panel3_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-for gls in gleps:
-    plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-#plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
-frame = plt.gca()
-frame.axes.xaxis.set_ticklabels([])
-#frame.axes.yaxis.set_ticklabels([])
-
-
-#INSET
-#inset_axes1 = inset_axes(ax[2], 
-#                    width="40%", # width = 30% of parent_bbox
-#                    height=0.8, # height : 1 inch
-#                    loc=4, 
-#                    borderpad=1
-#                    )
-#plt.plot(t-glep,1e6*(mc-glf0-glf1-exp1), 'k-', zorder=2)
-#plt.errorbar(panel3_mjd - glep, panel3_nu, yerr=panel3_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.xlim([0, 50]) 
-#frame = plt.gca()
-#   #frame.axes.xaxis.set_ticklabels([])
-#frame.axes.yaxis.set_ticklabels([])
-
-#END INSET
-
+mc[mask_len] = ma.masked  # mc: mask data at glep
 
 # mod ly
 #sf2 = x * F2
 #nudot_mod = nudot_model - sf2
 # mod ly
 md = ma.array(nudot_model) 
-md[mask_len] = ma.masked # md: nudot model with pre-glitch data masked
+md[mask_len] = ma.masked # md: mask data at glep
 
 
-plt.subplot(514)
-plt.plot(t-glep, md/1e5, 'k-', zorder=2)
-plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.ylim([-3.725, -3.62])
-#plt.xlim([-30, 50])
-#plt.xlim([-10, 10])
-for gls in gleps:
-    plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-plt.ylabel(r'$\dot{\nu}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
-plt.xlabel("Days since glitch epoch", fontsize=15)
-plt.subplots_adjust(wspace=0, hspace=0.002)
+if all(f0d==0 for f0d in pglf0d): # remove the 3rd panel
+    fig, ax = plt.subplots(nrows=4, ncols=1, figsize=(7.5, 10.6)) #10.6
+    #fig = plt.figure(figsize=(7.5, 10.6))
+    #gs = gridspec.GridSpec(4, 1)
+    #gs.update(wspace=0.025, hspace=0.0001)
 
-frame = plt.gca()
-frame.axes.xaxis.set_ticklabels([])
+    plt.subplot(411)
+    plt.plot(t-glep,1e6*mc, 'k-', zorder=2)
+    plt.errorbar(panel1_mjd - glep, panel1_nu, yerr=panel1_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1)
+    #plt.errorbar(this_mjd - glep, this_dnu, yerr=this_dnu_err, marker='.', color='k', ecolor='k', linestyle='None', alpha=0.2, markersize=4)
+    plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15)
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    #plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
+
+    plt.subplot(412)
+    plt.plot(t-glep,1e6*(mc-glf0-glf1), 'k-', zorder=2)
+    plt.errorbar(panel2_mjd - glep, panel2_nu, yerr=panel2_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([-30, 30])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    #plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15, labelpad=15)
+
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
+
+    plt.subplot(413)
+    plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.ylim([-3.725, -3.62])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\dot{\nu}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.xlabel("Days since glitch epoch", fontsize=15)
+    plt.subplots_adjust(wspace=0, hspace=0.002)
+
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
+
+    #INSET
+    #inset_axes2 = inset_axes(ax[3], 
+    #                    width="40%", # width = 30% of parent_bbox
+    #                    height=0.6, # height : 1 inch
+    #                    loc=1,
+    #                    borderpad=1)
+    #plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    #plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([0,50])
+    #frame = plt.gca()
+    ##frame.axes.xaxis.set_ticklabels([])
+    #frame.axes.yaxis.set_ticklabels([])
+
+    #plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    #plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([-0.001, 5]) 
+    #plt.xticks([])
+    #plt.yticks([])
+    #END INSET
+
+    plt.subplot(414)
+    plt.plot(t-glep, md/1e5-(mdglf1-mdcor)/1e-10, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, (str_nudot-strglf1+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.ylim([-3.725, -3.62])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\dot{\nu}_{ng}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.xlabel("Days since glitch epoch", fontsize=15)
+    plt.subplots_adjust(wspace=0, hspace=0.002)
+
+    #frame = plt.gca()
+    #frame.axes.xaxis.set_ticklabels([])
+
+    plt.tight_layout()
+    plt.savefig("nu_nudot_gp_{}.pdf".format(psrn), format='pdf', dpi=400)
+    plt.show()
 
 
-#INSET
-#inset_axes2 = inset_axes(ax[3], 
-#                    width="40%", # width = 30% of parent_bbox
-#                    height=0.6, # height : 1 inch
-#                    loc=1,
-#                    borderpad=1)
-#plt.plot(t-glep, md/1e5, 'k-', zorder=2)
-#plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.xlim([0,50])
-#frame = plt.gca()
-##frame.axes.xaxis.set_ticklabels([])
-#frame.axes.yaxis.set_ticklabels([])
+else:
+    fig, ax = plt.subplots(nrows=5, ncols=1, figsize=(7.5, 12.8)) #10.6
+    #fig = plt.figure(figsize=(7.5, 10.6))
+    #gs = gridspec.GridSpec(4, 1)
+    #gs.update(wspace=0.025, hspace=0.0001)
 
-#plt.plot(t-glep, md/1e5, 'k-', zorder=2)
-#plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.xlim([-0.001, 5]) 
-#plt.xticks([])
-#plt.yticks([])
-#END INSET
+    plt.subplot(511)
+    plt.plot(t-glep,1e6*mc, 'k-', zorder=2)
+    plt.errorbar(panel1_mjd - glep, panel1_nu, yerr=panel1_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1)
+    #plt.errorbar(this_mjd - glep, this_dnu, yerr=this_dnu_err, marker='.', color='k', ecolor='k', linestyle='None', alpha=0.2, markersize=4)
+    plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15)
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    #plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
 
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
 
-plt.subplot(515)
-plt.plot(t-glep, md/1e5-(mdglf1-mdcor)/1e-10, 'k-', zorder=2)
-plt.errorbar(str_mjd - glep, (str_nudot-strglf1+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
-#plt.ylim([-3.725, -3.62])
-#plt.xlim([-30, 50])
-#plt.xlim([-10, 10])
-for gls in gleps:
-    plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-plt.ylabel(r'$\dot{\nu}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
-plt.xlabel("Days since glitch epoch", fontsize=15)
-plt.subplots_adjust(wspace=0, hspace=0.002)
+    plt.subplot(512)
+    plt.plot(t-glep,1e6*(mc-glf0-glf1), 'k-', zorder=2)
+    plt.errorbar(panel2_mjd - glep, panel2_nu, yerr=panel2_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([-30, 30])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    #plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15, labelpad=15)
 
-#frame = plt.gca()
-#frame.axes.xaxis.set_ticklabels([])
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
 
+    #If exists recovery
+    plt.subplot(513)
+    plt.ylabel(r'$\delta \nu$ ($\mu$Hz)', fontsize=15)
+    #plt.ylim([-0.3, 0.08])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    plt.plot(t-glep,1e6*(mc-glf0-glf1-exp1-exp2), 'k-', zorder=2)
+    plt.errorbar(panel3_mjd - glep, panel3_nu, yerr=panel3_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    #plt.axvline(0, color='k', linestyle='dashed', alpha=0.5)
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
+    #frame.axes.yaxis.set_ticklabels([])
 
-plt.tight_layout()
-plt.savefig("nu_nudot_gp_{}.pdf".format(psrn), format='pdf', dpi=400)
-plt.show()
+    #INSET
+    #inset_axes1 = inset_axes(ax[2], 
+    #                    width="40%", # width = 30% of parent_bbox
+    #                    height=0.8, # height : 1 inch
+    #                    loc=4, 
+    #                    borderpad=1
+    #                    )
+    #plt.plot(t-glep,1e6*(mc-glf0-glf1-exp1), 'k-', zorder=2)
+    #plt.errorbar(panel3_mjd - glep, panel3_nu, yerr=panel3_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([0, 50]) 
+    #frame = plt.gca()
+    #   #frame.axes.xaxis.set_ticklabels([])
+    #frame.axes.yaxis.set_ticklabels([])
+    #END INSET
+
+    plt.subplot(514)
+    plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.ylim([-3.725, -3.62])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\dot{\nu}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.xlabel("Days since glitch epoch", fontsize=15)
+    plt.subplots_adjust(wspace=0, hspace=0.002)
+
+    frame = plt.gca()
+    frame.axes.xaxis.set_ticklabels([])
+
+    #INSET
+    #inset_axes2 = inset_axes(ax[3], 
+    #                    width="40%", # width = 30% of parent_bbox
+    #                    height=0.6, # height : 1 inch
+    #                    loc=1,
+    #                    borderpad=1)
+    #plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    #plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([0,50])
+    #frame = plt.gca()
+    ##frame.axes.xaxis.set_ticklabels([])
+    #frame.axes.yaxis.set_ticklabels([])
+
+    #plt.plot(t-glep, md/1e5, 'k-', zorder=2)
+    #plt.errorbar(str_mjd - glep, str_nudot/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.xlim([-0.001, 5]) 
+    #plt.xticks([])
+    #plt.yticks([])
+    #END INSET
+
+    plt.subplot(515)
+    plt.plot(t-glep, md/1e5-(mdglf1-mdcor)/1e-10, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, (str_nudot-strglf1+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    #plt.ylim([-3.725, -3.62])
+    #plt.xlim([-30, 50])
+    #plt.xlim([-10, 10])
+    for gls in gleps:
+        plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
+    plt.ylabel(r'$\dot{\nu}_{ng}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.xlabel("Days since glitch epoch", fontsize=15)
+    plt.subplots_adjust(wspace=0, hspace=0.002)
+
+    #frame = plt.gca()
+    #frame.axes.xaxis.set_ticklabels([])
+
+    plt.tight_layout()
+    plt.savefig("nu_nudot_gp_{}.pdf".format(psrn), format='pdf', dpi=400)
+    plt.show()
