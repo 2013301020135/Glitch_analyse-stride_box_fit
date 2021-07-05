@@ -8,7 +8,7 @@ Turn on tempo2 fit for RAJ, DECJ, F0, F1, F2, JUMP. If exist PMRA, PMDEC, turn o
 
 Fit dbr_psrn.par chp_psrn.tim with ENTERPRISE
 
-```/local/scratch/yangliu/glitch/run_ennterprise/run_enterprise.py --gl-all --auto-add --dynesty --nlive 500 -t 2 dbr_psrn.par chp_psrn.tim --truth-file dbr_psrn_truth.txt --dynesty-plots --plot-derived -j --red-prior-log --measured-prior -A -8 --tspan-mult 1.1 --glitch-alt-f0 --glitch-alt-f0t 200 --alt-f0t-gltd --glitch-epoch-range 100 --measured-sigma 50 --glitch-td-min 1 --glitch-td-max 2.5 --glitch-f0d-range 3.0 --glitch-f0-range 0.8 --glitch-f1-range 0.8 --glitch-td-split 2```
+```/local/scratch/yangliu/glitch/run_enterprise/run_enterprise.py --gl-all --auto-add --dynesty --nlive 500 -t 2 dbr_psrn.par chp_psrn.tim --truth-file dbr_psrn_truth.txt --dynesty-plots --plot-derived -j --red-prior-log --measured-prior -A -8 --tspan-mult 1.1 --glitch-alt-f0 --glitch-alt-f0t 200 --alt-f0t-gltd --glitch-epoch-range 100 --measured-sigma 50 --glitch-td-min 1 --glitch-td-max 2.5 --glitch-f0d-range 3.0 --glitch-f0-range 0.8 --glitch-f1-range 0.8 --glitch-td-split 2```
 
 Open fix_dbr_psrn_d.par.post with fix_chp_psrn.tim in tempo2 and save a new par file fnl_psrn_d.par, \_d stands for dynesty fit
 
