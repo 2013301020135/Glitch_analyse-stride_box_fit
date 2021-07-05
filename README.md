@@ -26,21 +26,13 @@ Make combined plots and nudot.asc etc.
 
 ```python new_make_pulsar_plots.py fnl_psrn_d.par chp_psrn.tim tst_psrn_d.par```
 
-Generate stride epochs and save it in text files, c stands for cadence, the expression in brackets are reference values for the choice of boxcar width and step size
+Generate stride epochs and save it in text files, c stands for cadence, the expression in brackets are reference values for the choice of boxcar width and step size. Do tempo2 fitting for F0, F1, F2 in all the boxcars and save results in psrn_g_w_s_data.txt, g: numbber of glitches, w: boxcar width, s: step size
 
-```python make_stride_com.py -p tst_psrn_d.par -t chp_psrn.tim -w (5*c) -s (2.5*c) -g (GLEP_1, …)```
+```python stride_fit.py -p tst_psrn_d.par -t chp_psrn.tim -w (5*c) -s (2.5*c) -g (GLEP_1, …)```
 
-Do tempo2 fitting for F0, F1, F2 in all the boxcars and save results in psrn_g_w_s_data.txt, g: numbber of glitches, w: boxcar width, s: step size
+Calculate the results for panels and save them in text files. Plot the evolution of nu and nudot
 
-```python do_stride.py -p tst_psrn_d.par -t chp_psrn.tim -e psrn_g?_w?_s?_epochs.txt```
-
-Calculate the results for panels and save them in text files
-
-```python crab_panels.py -p fnl_psrn_d.par -s psrn_g?_w?_s?_data.txt```
-
-Plot the evolution of nu and nudot
-
-```python analyse_for_paper.py -p fnl_psrn_d.par -s psrn_g?_w?_s?_data.txt```
+```python plot_panels.py -p fnl_psrn_d.par -s psrn_g?_w?_s?_data.txt```
 
 
 ## Reference
