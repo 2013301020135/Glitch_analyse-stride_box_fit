@@ -24,7 +24,7 @@ t, f0, f0e, f1, f1e, f2, f2e, mjds, mjdf = np.loadtxt(strdat, unpack=True)
 pglep=np.zeros(100)
 pglf0=np.zeros(100)
 pglf1=np.zeros(100)
-
+pglf2=np.zeros(100)
 pglf0d=np.zeros(100)
 pgltd=np.ones(100)
 pglf0d2=np.zeros(100)
@@ -48,6 +48,9 @@ with open(par) as f:
         if e[0].startswith("GLF1_"):
             i=int(e[0][5:])
             pglf1[i-1] = float(e[1])
+        if e[0].startswith("GLF2_"):
+            i=int(e[0][5:])
+            pglf2[i-1] = float(e[1])
         if e[0].startswith("GLTD_"):
             i=int(e[0][5:])
             pgltd[i-1] = float(e[1])
@@ -103,6 +106,7 @@ tf2 = 0.5 * x * x * F2
 
 glf0 = np.zeros_like(t)
 glf1 = np.zeros_like(t)
+glf2 = np.zeros_like(t)
 exp1 = np.zeros_like(t)
 exp2 = np.zeros_like(t)
 
@@ -120,18 +124,20 @@ for gi in range(len(pglep)):
         #GLF1 term
         glf1[xx>0] += xx[xx>0] * pglf1[gi]
 
+        #GLF2 term
+        glf2[xx>0] += 0.5* (xx[xx>0]**2) * pglf2[gi]
+
         #transient terms
         exp1 += glexp(xx,pgltd[gi],pglf0d[gi])
         if pglf0d2[gi] != 0:
             exp2 += glexp(xx,pgltd2[gi],pglf0d2[gi])
 
 
-
 plt.errorbar(t, 1e6*(f0 - F0 - tf1 - tf2), yerr=1e6*f0e, marker='.', color='k', ecolor='k', linestyle='None')
 plt.show()
-plt.errorbar(t, 1e6*(f0 - F0 - tf1 - tf2 - glf0 - glf1), yerr=1e6*f0e, marker='.', color='k', ecolor='k', linestyle='None')
+plt.errorbar(t, 1e6*(f0 - F0 - tf1 - tf2 - glf0 - glf1 - glf2), yerr=1e6*f0e, marker='.', color='k', ecolor='k', linestyle='None')
 plt.show()
-plt.errorbar(t, 1e6*(f0 - F0 - tf1 - tf2 - glf0 - glf1 - exp1 - exp2), yerr=1e6*f0e, marker='.', color='k', ecolor='k', linestyle='None')
+plt.errorbar(t, 1e6*(f0 - F0 - tf1 - tf2 - glf0 - glf1 - glf2 - exp1 -exp2), yerr=1e6*f0e, marker='.', color='k', ecolor='k', linestyle='None')
 plt.show()
 
 
@@ -142,28 +148,12 @@ with open("panel1_{}.txt".format(psrn),"w") as file1:
 
 with open("panel2_{}.txt".format(psrn),"w") as file2:
     for i in range(0, len(t)):
-        file2.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i]), 1e6*f0e[i]))
+        file2.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - glf2[i]), 1e6*f0e[i]))
     file2.close()
 
 with open("panel3_{}.txt".format(psrn),"w") as file3:
     for i in range(0, len(t)):
-        file3.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - exp1[i] -exp2[i]), 1e6*f0e[i]))
+        file3.write('%f   %e   %e   \n'%(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - glf2[i] - exp1[i] -exp2[i]), 1e6*f0e[i]))
     file3.close()
 
-#def lin(x, a, b):
-#    return a*x+b
-
-#def qua(x, a, b, c):
-#    return a*x**2+b*x+c
-
-#idxlen = len(t[t<glep])
-#opt_pre, cov_pre = curve_fit(lin, t[:idxlen], f0[:idxlen], sigma=f0e[:idxlen])
-#print(np.mean(f0), F0, opt_pre[0])
-#slope = opt_pre[0]*(t-pepoch)
-
-#for i in range(0, len(t)):
-    #print(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i]), 1e6*f0e[i])
-    #print(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i]), 1e6*f0e[i])
-    #print(t[i], 1e6*(f0[i] - F0 - tf1[i] - tf2[i] - glf0[i] - glf1[i] - exp1[i]), 1e6*f0e[i])
-# output to panel.txt
 

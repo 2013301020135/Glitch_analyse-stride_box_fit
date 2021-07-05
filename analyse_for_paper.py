@@ -29,7 +29,7 @@ plt.rcParams['ps.fonttype'] = 42
 pglep=np.zeros(100)
 pglf0=np.zeros(100)
 pglf1=np.zeros(100)
-
+pglf2=np.zeros(100)
 pglf0d=np.zeros(100)
 pgltd=np.ones(100)
 pglf0d2=np.zeros(100)
@@ -53,6 +53,9 @@ with open(par) as f:
         if e[0].startswith("GLF1_"):
             i=int(e[0][5:])
             pglf1[i-1] = float(e[1])
+        if e[0].startswith("GLF2_"):
+            i=int(e[0][5:])
+            pglf2[i-1] = float(e[1])
         if e[0].startswith("GLTD_"):
             i=int(e[0][5:])
             pgltd[i-1] = float(e[1])
@@ -94,6 +97,7 @@ print("")
 print("Glitch epoch:", pglep[0])
 print("GLF0:", pglf0[0])
 print("GLF1:", pglf1[0])
+print("GLF2:", pglf2[0])
 print("")
 print("GLF0D_1:", pglf0d[0], " - GLTD_1", pgltd[0], "GLF0D2_1:", pglf0d2[0], " - GLTD2_1", pgltd2[0])
 print("Initial jump:", pglf0d[0]+pglf0d2[0]+pglf0[0])
@@ -141,13 +145,16 @@ tf2 = 0.5 * x * x * F2
 
 glf0 = np.zeros_like(t)
 glf1 = np.zeros_like(t)
+glf2 = np.zeros_like(t)
 exp1 = np.zeros_like(t)
 exp2 = np.zeros_like(t)
 mdglf1 = np.zeros_like(t)
+mdglf2 = np.zeros_like(t)
 mdcor = np.zeros_like(t)
 
 #str2nu = np.zeros_like(str_mjd)
 strglf1 = np.zeros_like(str_mjd)
+strglf2 = np.zeros_like(str_mjd)
 strexp1 = np.zeros_like(str_mjd)
 strexp2 = np.zeros_like(str_mjd)
 strcor = np.zeros_like(str_mjd)
@@ -167,8 +174,14 @@ for gi in range(len(pglep)):
         #GLF1 term
         glf1[xx>0] += xx[xx>0] * pglf1[gi]
 
+        #GLF2 term
+        glf2[xx>0] += 0.5* (xx[xx>0]**2) * pglf2[gi]
+
         #Change in spin-down rate
         mdglf1[xx>0] += pglf1[gi]  
+
+        #Change in spin-down rate derivative
+        mdglf2[xx>0] += xx[xx>0] * pglf2[gi]  
 
         #transient terms
         exp1 += glexp(xx,pgltd[gi],pglf0d[gi])
@@ -184,6 +197,9 @@ for gi in range(len(pglep)):
 
         #stride GLF1 term
         strglf1[strx>0] += pglf1[gi]
+
+        #stride GLF2 term
+        strglf2[strx>0] += strx[strx>0] * pglf2[gi]
 
         #transient terms
         strexp1 += glexp(strx,pgltd[gi],pglf0d[gi])
@@ -237,7 +253,7 @@ if all(f0d==0 for f0d in pglf0d): # remove the 3rd panel
     frame.axes.xaxis.set_ticklabels([])
 
     plt.subplot(412)
-    plt.plot(t-glep,1e6*(mc-glf0-glf1), 'k-', zorder=2)
+    plt.plot(t-glep,1e6*(mc-glf0-glf1-glf2), 'k-', zorder=2)
     plt.errorbar(panel2_mjd - glep, panel2_nu, yerr=panel2_err, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
     #plt.xlim([-30, 30])
     #plt.xlim([-30, 50])
@@ -286,14 +302,14 @@ if all(f0d==0 for f0d in pglf0d): # remove the 3rd panel
     #END INSET
 
     plt.subplot(414)
-    plt.plot(t-glep, md/1e5-(mdglf1-mdcor)/1e-10, 'k-', zorder=2)
-    plt.errorbar(str_mjd - glep, (str_nudot-strglf1+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    plt.plot(t-glep, md/1e5-(mdglf1+mdglf2-mdcor)/1e-10, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, (str_nudot-strglf1-strglf2+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
     #plt.ylim([-3.725, -3.62])
     #plt.xlim([-30, 50])
     #plt.xlim([-10, 10])
     for gls in gleps:
         plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-    plt.ylabel(r'$\dot{\nu}_{ng}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.ylabel(r'$\dot{\nu}_{\mathrm{ng}}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
     plt.xlabel("Days since glitch epoch", fontsize=15)
     plt.subplots_adjust(wspace=0, hspace=0.002)
 
@@ -405,14 +421,14 @@ else:
     #END INSET
 
     plt.subplot(515)
-    plt.plot(t-glep, md/1e5-(mdglf1-mdcor)/1e-10, 'k-', zorder=2)
-    plt.errorbar(str_mjd - glep, (str_nudot-strglf1+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
+    plt.plot(t-glep, md/1e5-(mdglf1+mdglf2-mdcor)/1e-10, 'k-', zorder=2)
+    plt.errorbar(str_mjd - glep, (str_nudot-strglf1-strglf2+strcor)/1e-10, yerr=str_err/1e-10, marker='.', color='r', ecolor='r', linestyle='None', alpha=1, zorder=1, markersize=4)
     #plt.ylim([-3.725, -3.62])
     #plt.xlim([-30, 50])
     #plt.xlim([-10, 10])
     for gls in gleps:
         plt.axvline(gls-glep, color='k', linestyle='dotted', alpha=0.3, linewidth=2)
-    plt.ylabel(r'$\dot{\nu}_{ng}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
+    plt.ylabel(r'$\dot{\nu}_{\mathrm{ng}}$ ($10^{-10}$ Hz s$^{-1}$)', fontsize=15)
     plt.xlabel("Days since glitch epoch", fontsize=15)
     plt.subplots_adjust(wspace=0, hspace=0.002)
 
