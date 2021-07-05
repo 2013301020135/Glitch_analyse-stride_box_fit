@@ -92,20 +92,20 @@ print("F1:", F1)
 print("F2:", F2)
 print("")
 
-# for i in range(max_glitch):
+for i in range(max_glitch):
+    print("The {} glitch".format(i))
+    print("Glitch epoch:", pglep[i])
+    print("GLF0:", pglf0[i])
+    print("GLF1:", pglf1[i])
+    print("GLF2:", pglf2[i])
+    print("GLF0D_1:", pglf0d[i], " - GLTD_1", pgltd[i], "GLF0D2_1:", pglf0d2[i], " - GLTD2_1", pgltd2[i])
+    print("Initial jump:", pglf0d[i]+pglf0d2[i]+pglf0[i])
 
-print("Glitch epoch:", pglep[0])
-print("GLF0:", pglf0[0])
-print("GLF1:", pglf1[0])
-print("GLF2:", pglf2[0])
-print("")
-print("GLF0D_1:", pglf0d[0], " - GLTD_1", pgltd[0], "GLF0D2_1:", pglf0d2[0], " - GLTD2_1", pgltd2[0])
-print("Initial jump:", pglf0d[0]+pglf0d2[0]+pglf0[0])
+    #print("GLF0D_2:", pglf0d[1], " - T1", pgltd[1])
+    #print("GLF0D_3:", pglf0d[2], " - T1", pgltd[2])
 
-#print("GLF0D_2:", pglf0d[1], " - T1", pgltd[1])
-#print("GLF0D_3:", pglf0d[2], " - T1", pgltd[2])
-
-#print("Initial jump:", np.sum(pglf0d)+pglf0[0])
+    #print("Initial jump:", np.sum(pglf0d)+pglf0[0])
+    print("")
 
 dat="deltanu_{}.asc".format(psrn)
 #par="test_final.par"
