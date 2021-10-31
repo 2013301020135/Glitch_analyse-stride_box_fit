@@ -12,12 +12,12 @@ arg=parser.parse_args()
 
 t200 = arg.t
 fc = arg.fc
-file_name = arg.p
-pulsar_name = file_name.rsplit('.', 1)[0]
+file_name = arg.p.rsplit('.', 1)[0]
+pulsar_name = file_name.split('_')[1]
 
 f0=pepoch=redamp=redgam=None
 glitches = {}
-with open(file_name) as parfile:
+with open(arg.p) as parfile:
     for line in parfile:
         e = line.strip().split()
         if len(e) > 1:
@@ -47,7 +47,7 @@ with open(file_name) as parfile:
                 redgam = float(e[1])
     parfile.close()
 
-with open('%s_truth.txt'%pulsar_name, 'w') as truthfile:
+with open('trh_%s.txt'%pulsar_name, 'w') as truthfile:
     for gl in glitches:
         glf0=glf1=glf2=glf0_i=glf0_T=None
         glf0d=glf0d2=0

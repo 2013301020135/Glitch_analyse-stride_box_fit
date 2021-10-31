@@ -11,10 +11,9 @@ arg=parser.parse_args()
 
 t200 = arg.t
 fc = arg.fc
-
 file_name_list = glob.glob('*_final.par')
 file_name_list.sort()
-pulsar_name = [file_name.rsplit('_', 1)[0] for file_name in file_name_list]
+pulsar_name = [file_name.rsplit('.', 1)[0].split('_')[1] for file_name in file_name_list]
 
 for i in range(len(file_name_list)):
     f0=pepoch=redamp=redgam=None
@@ -49,7 +48,7 @@ for i in range(len(file_name_list)):
                     redgam = float(e[1])
         parfile.close()
 
-    with open('%s_truth.txt'%pulsar_name[i], 'w') as truthfile:
+    with open('trh_%s.txt'%pulsar_name[i], 'w') as truthfile:
         for gl in glitches:
             glf0=glf1=glf2=glf0_i=glf0_T=None
             glf0d=glf0d2=0
@@ -89,4 +88,4 @@ for i in range(len(file_name_list)):
             P0 = ((redamp**2)/(12*np.pi**2))*(fc**(-alpha))
             truthfile.write('TNRedAmp   %f\n'%redamp)
             truthfile.write('TNRedGam   %f\n'%redgam)
-            truthfile.close()
+        truthfile.close()
